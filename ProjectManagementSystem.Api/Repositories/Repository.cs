@@ -2,8 +2,9 @@
 using ProjectManagementSystem.Api.Models;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.Api.Repositories.Interfaces;
 
-namespace ProjectManagementSystem.Api.Repositories.Interfaces;
+namespace ProjectManagementSystem.Api.Repositories;
 
 public class Repository<T> : IRepository<T> where T : BaseModel
 {
