@@ -21,10 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\" />
+    <Folder Include="CQRS\User\FogetPassword\Commands\" />
+    <Folder Include="CQRS\User\FogetPassword\Queries\" />
+    <Folder Include="CQRS\User\Login\Commands\" />
+    <Folder Include="CQRS\User\Login\Queries\" />
+    <Folder Include="CQRS\User\Register\Commands\" />
+    <Folder Include="CQRS\User\Register\Queries\" />
+    <Folder Include="CQRS\User\RestePassword\Commands\" />
+    <Folder Include="CQRS\User\RestePassword\Queries\" />
     <Folder Include="Helpers\" />
     <Folder Include="Profiles\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
