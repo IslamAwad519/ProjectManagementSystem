@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
 
         return Ok(result);
     }
-    [Authorize]
+    //[Authorize]
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
     {
