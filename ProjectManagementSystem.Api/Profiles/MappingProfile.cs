@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Queries;
+using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
 using ProjectManagementSystem.Api.DTOs.Auth;
 
@@ -9,7 +9,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<ChangePasswordDto, ChangePasswordQuery>();
+        CreateMap<ChangePasswordDto, ChangePasswordCommand>();
 
         CreateMap<LoginUserDto, LoginUserQuery>();
     }

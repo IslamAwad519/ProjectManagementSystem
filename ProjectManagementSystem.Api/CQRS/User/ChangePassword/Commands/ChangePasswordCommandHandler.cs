@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using ProjectManagementSystem.Api.Models;
 using System.Security.Claims;
 
-namespace ProjectManagementSystem.Api.CQRS.User.ChangePassword.Queries;
+namespace ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 
-public class ChangePasswordQueryHandler : IRequestHandler<ChangePasswordQuery, bool>
+public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, bool>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ChangePasswordQueryHandler(
+    public ChangePasswordCommandHandler(
         UserManager<ApplicationUser> userManager,
         IHttpContextAccessor httpContextAccessor)
     {
@@ -18,8 +18,9 @@ public class ChangePasswordQueryHandler : IRequestHandler<ChangePasswordQuery, b
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<bool> Handle(ChangePasswordQuery request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
+        //TODO: Change this line
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {

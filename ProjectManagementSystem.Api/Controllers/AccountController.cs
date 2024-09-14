@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Queries;
+using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
 using ProjectManagementSystem.Api.DTOs.Auth;
 
@@ -37,9 +37,9 @@ public class AccountController : ControllerBase
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
     {
-        var query = _mapper.Map<ChangePasswordQuery>(request);
+        var command = _mapper.Map<ChangePasswordCommand>(request);
 
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(command);
         if (result)
         {
             return Ok("Password changed successfully");

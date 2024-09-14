@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace ProjectManagementSystem.Api.CQRS.User.ChangePassword.Queries;
+namespace ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 
-public class ChangePasswordQuery: IRequest<bool>
+public class ChangePasswordCommand: IRequest<bool>
 {
     public string CurrentPassword { get; set; }
     public string NewPassword { get; set; }
