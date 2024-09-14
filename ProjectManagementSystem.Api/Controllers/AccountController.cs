@@ -34,18 +34,16 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
     //[Authorize]
-    [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
-    {
-        var command = _mapper.Map<ChangePasswordCommand>(request);
+    //[HttpPost("change-password")]
+    //public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
+    //{
+    //    var command = _mapper.Map<ChangePasswordCommand>(request);
 
-        var result = await _mediator.Send(command);
-        if (result)
-        {
-            return Ok("Password changed successfully");
-        }
-        return BadRequest("Something went wrong !");
-    }
-
-    //////////////////////////////////////////////////
+    //    var result = await _mediator.Send(command);
+    //    if (result)
+    //    {
+    //        return Ok("Password changed successfully");
+    //    }
+    //    return BadRequest("Something went wrong !");
+    //}
 }
