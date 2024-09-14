@@ -1,32 +1,26 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Api.CQRS.WeatherForecasts.Queries.GetWeatherForecasts;
 using ProjectManagementSystem.Api.Models;
 
 namespace ProjectManagementSystem.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
+//[Authorize]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly IMediator mediator;
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(IMediator mediator)
     {
-        _logger = logger;
+        this.mediator = mediator;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpGet("GetWeatherForecast")]
+    public async Task<IEnumerable<WeatherForecast>> GetWeatherForecasts()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        var query = new GetWeatherForecastsQuery();
+        return await mediator.Send(query);
     }
 }
