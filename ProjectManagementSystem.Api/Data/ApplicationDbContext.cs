@@ -12,5 +12,8 @@ public class ApplicationDbContext  : IdentityDbContext<ApplicationUser>
 
 
     //add DbSets here
-   
+   public DbSet<Project> Projects { get; set; }
+   public DbSet<TaskItem> TaskItems { get; set; }
+   public DbSet<ProjectUser> ProjectUsers { get; set; }
+   public DbSet<User> Users { get; set; }
 }

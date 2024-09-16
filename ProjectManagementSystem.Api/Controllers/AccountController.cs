@@ -46,6 +46,5 @@ public class AccountController : ControllerBase
         }
         return BadRequest("Something went wrong !");
     }
-
-    //////////////////////////////////////////////////
+    
 }
