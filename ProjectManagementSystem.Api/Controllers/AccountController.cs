@@ -1,10 +1,12 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
-using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
-using ProjectManagementSystem.Api.DTOs.Auth;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands;
+using ProjectManagementSystem.Api.Dtos.ForgetPassword;
+using ProjectManagementSystem.Api.Dtos.VerifyAccount;
+using ProjectManagementSystem.Api.Exceptions.Error;
+using ProjectManagementSystem.Api.Helpers;
+using ProjectManagementSystem.Api.ViewModels.ForgetPassword;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
+using ProjectManagementSystem.Api.ViewModels.VerifyAccount;
 
 namespace ProjectManagementSystem.Api.Controllers;
 
@@ -12,39 +14,5 @@ namespace ProjectManagementSystem.Api.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-    public AccountController(IMediator mediator, IMapper mapper)
-    {
-        _mediator = mediator;
-        _mapper = mapper;
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginUserDto request)
-    {
-        var query = _mapper.Map<LoginUserQuery>(request);
-
-        var result = await _mediator.Send(query);
-        if (result is null)
-        {
-            return Unauthorized("Password or username is wrong");
-        }
-
-        return Ok(result);
-    }
-    //[Authorize]
-    [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
-    {
-        var command = _mapper.Map<ChangePasswordCommand>(request);
-
-        var result = await _mediator.Send(command);
-        if (result)
-        {
-            return Ok("Password changed successfully");
-        }
-        return BadRequest("Something went wrong !");
-    }
-    
 }
+
