@@ -1,8 +1,13 @@
+using AutoMapper;
+using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Api.Data;
+using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.Helpers.GenerateToken;
 using ProjectManagementSystem.Api.Models;
+using ProjectManagementSystem.Api.Profiles;
+using ProjectManagementSystem.Api.Services.VerifyAccount;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -15,7 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
     {
         opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection"));
     });
-    #endregion
 
     #region  Identity
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -23,20 +27,21 @@ var builder = WebApplication.CreateBuilder(args);
         .AddDefaultTokenProviders();
     #endregion
 
-    #region Mediator
     //builder.Services.AddMediatR(typeof(Program).Assembly);
     builder.Services.AddMediatR(cfg =>
     {
         cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
     });
-}
-
     builder.Services.AddTransient<IMailService, MailService>();
     builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
+    builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
     builder.Services.AddTransient<IOTPService, OTPService>();
     builder.Services.AddTransient<IUserService, UserService>();
-    var app = builder.Build();
+}
+
+
+var app = builder.Build();
+{
 
     MapperHelper.Mapper = app.Services.GetService<IMapper>()!;
 
