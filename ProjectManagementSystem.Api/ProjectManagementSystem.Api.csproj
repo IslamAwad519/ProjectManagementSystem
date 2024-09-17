@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Folder Include="CQRS\Project\" />
 	  <Folder Include="CQRS\TaskItem\" />
 	  <Folder Include="CQRS\User\FogetPassword\Commands\" />
 	  <Folder Include="CQRS\User\FogetPassword\Queries\" />

@@ -1,5 +1,4 @@
 using AutoMapper;
-using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Api.Data;
@@ -7,6 +6,9 @@ using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.Helpers.GenerateToken;
 using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.Profiles;
+using ProjectManagementSystem.Api.Repositories;
+using ProjectManagementSystem.Api.Repositories.Interfaces;
+using ProjectManagementSystem.Api.Services.ForgetPassword;
 using ProjectManagementSystem.Api.Services.VerifyAccount;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,10 +35,15 @@ var builder = WebApplication.CreateBuilder(args);
         cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
     });
     builder.Services.AddTransient<IMailService, MailService>();
+    builder.Services.AddTransient<IJwtGenerator, JwtGenerator>();
+
     builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
     builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+    builder.Services.AddAutoMapper(typeof(ProjectProfile).Assembly);
     builder.Services.AddTransient<IOTPService, OTPService>();
-    builder.Services.AddTransient<IUserService, UserService>();
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 }
 
 
