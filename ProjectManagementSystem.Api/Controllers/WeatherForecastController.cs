@@ -8,6 +8,7 @@ namespace ProjectManagementSystem.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 //[Authorize]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class WeatherForecastController : ControllerBase
 {
     private readonly IMediator mediator;
