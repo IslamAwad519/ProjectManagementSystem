@@ -22,11 +22,15 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] GetProjectListQueryParams projectParams)
     {
-        var projects = await _mediator.Send(new GetProjectsQuery());
+        //var listParams = _mapper.Map<GetProjectsQuery>(projectParams);
+        var query = new GetProjectsQuery(projectParams.IsDescending,projectParams.Name, projectParams.Status, projectParams.CreatedFrom, 
+            projectParams.CreatedTo,projectParams.OrderBy);
+        var projects = await _mediator.Send(query);
         return Ok(projects);
     }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
