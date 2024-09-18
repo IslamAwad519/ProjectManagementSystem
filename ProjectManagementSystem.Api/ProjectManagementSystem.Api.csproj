@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CQRS\User\FogetPassword\**" />
+    <Content Remove="CQRS\User\FogetPassword\**" />
+    <EmbeddedResource Remove="CQRS\User\FogetPassword\**" />
+    <None Remove="CQRS\User\FogetPassword\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MailKit" Version="4.7.1.1" />
     <PackageReference Include="MediatR" Version="12.0.0" />
@@ -26,14 +33,13 @@
 	  <Folder Include="CQRS\User\FogetPassword\Queries\" />
 	  <Folder Include="CQRS\User\Login\Commands\" />
 	  <Folder Include="CQRS\User\Login\Queries\" />
-	  <Folder Include="CQRS\User\FogetPassword\Commands\" />
-    <Folder Include="CQRS\User\FogetPassword\Queries\" />
     <Folder Include="CQRS\User\Login\Commands\" />
     <Folder Include="CQRS\User\Login\Queries\" />
     <Folder Include="CQRS\User\Register\Commands\" />
     <Folder Include="CQRS\User\Register\Queries\" />
     <Folder Include="CQRS\User\RestePassword\Commands\" />
     <Folder Include="CQRS\User\RestePassword\Queries\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
