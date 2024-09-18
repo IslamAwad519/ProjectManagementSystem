@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
+using ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
@@ -93,6 +94,15 @@ public class AccountController : ControllerBase
             return ResultViewModel<OTPVerificationResponseVM>.Failure(ErrorCode.ValidationError, responseVM.Message);
         }
         return ResultViewModel<OTPVerificationResponseVM>.Success(responseVM, responseVM.Message);
+    }
+
+    [HttpPost("ResetPassword")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordToReturnDto request)
+    {
+        var Command = _mapper.Map<ResetPasswordCommand>(request);
+        var result = await _mediator.Send(Command);
+
+        return Ok(result);
     }
 }
 

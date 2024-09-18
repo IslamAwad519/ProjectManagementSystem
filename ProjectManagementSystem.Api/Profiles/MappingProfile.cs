@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
+using ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
 using ProjectManagementSystem.Api.DTOs.Auth;
@@ -23,5 +24,6 @@ public class MappingProfile : Profile
         CreateMap<GenerateOTPResponseDto, OTPVerificationResponseVM>();
         CreateMap<OTPVerificationRequestVM, VerifyOTPRequestDto>();
         CreateMap<VerifyOTPResponseDto, OTPVerificationResponseVM>();
+        CreateMap<ResetPasswordToReturnDto, ResetPasswordCommand>();
     }
 }
