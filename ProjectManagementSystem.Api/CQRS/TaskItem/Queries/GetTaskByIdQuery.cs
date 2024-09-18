@@ -37,7 +37,7 @@ namespace ProjectManagementSystem.Api.CQRS.TaskItem.Queries
                     t.TaskStatus,
                     ProjectName = t.Project.Name,  
                     UserName = t.User.UserName,    
-                    t.CreatedAt
+                    t.CreationTime
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -54,7 +54,7 @@ namespace ProjectManagementSystem.Api.CQRS.TaskItem.Queries
                 TaskStatus = task.TaskStatus,
                 ProjectName = task.ProjectName,
                 UserName = task.UserName,
-                DateCreated = task.CreatedAt
+                DateCreated = task.CreationTime
             };
         }
     }

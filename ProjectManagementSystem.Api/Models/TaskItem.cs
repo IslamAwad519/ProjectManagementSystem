@@ -7,7 +7,7 @@ public class TaskItem : BaseModel
     public Enums.TaskItemStatus TaskStatus { get; set; }
     public int ProjectId { get; set; }  //FK
     public int UserId { get; set; }
-    public DateTime CreatedAt { get; set; }
+    //public DateTime CreatedAt { get; set; }
     public Project Project { get; set; }  //NP
     public User User { get; set; }
 

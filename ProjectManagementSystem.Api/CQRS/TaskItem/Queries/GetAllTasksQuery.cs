@@ -32,7 +32,7 @@ namespace ProjectManagementSystem.Api.CQRS.TaskItem.Queries
                 TaskStatus = task.TaskStatus, 
                 ProjectName = task.Project.Name,
                 UserName = task.User.UserName,
-                DateCreated = task.CreatedAt,
+                DateCreated = task.CreationTime,
             }).ToListAsync(cancellationToken);
 
             // Convert the TaskStatus enum to a string representation

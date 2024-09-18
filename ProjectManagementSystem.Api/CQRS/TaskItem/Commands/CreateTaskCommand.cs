@@ -65,7 +65,7 @@ namespace ProjectManagementSystem.Api.CQRS.TaskItem.Commands
                 ProjectId = projects.First().Id,
                 UserId = users.FirstOrDefault()?.Id ?? throw new Exception("No valid user found"),
                 TaskStatus = TaskItemStatus.ToDo,
-                CreatedAt = DateTime.Now
+                CreationTime = DateTime.Now
             };
 
             _taskRepository.Add(task);
