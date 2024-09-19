@@ -13,6 +13,7 @@ public class ProjectProfile : Profile
     public ProjectProfile()
     {
         CreateMap<CreateProjectDto, CreateProjectCommand>();
+        CreateMap<CreateProjectCommand, Project>();
         CreateMap<Project, ProjectDto>()
             .ForMember(dest=>dest.CreationTime,opt=>opt.MapFrom(src=>src.CreationTime.ToString(CultureInfo.CurrentCulture)));
 

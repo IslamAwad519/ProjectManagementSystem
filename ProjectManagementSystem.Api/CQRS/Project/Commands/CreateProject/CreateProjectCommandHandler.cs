@@ -23,18 +23,10 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
 
     public async Task<ProjectDto> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
-        // Retrieve Users to associate
-        //var users = await _userRepository.GetUsersByIdsAsync(request.UserIds);
 
-        var project = new Models.Project
-        {
-            Name = request.Name,
-            Description = request.Description,
-            ProjectStatus = request.ProjectStatus,
-           // Users = users.Select(u => new ProjectUser { UserId = u.Id }).ToList()
-        };
+       var project =  _mapper.Map<Models.Project>(request);
 
-         _projectRepository.Add(project);
+        _projectRepository.Add(project);
          _projectRepository.SaveChanges();
 
         return _mapper.Map<ProjectDto>(project);
