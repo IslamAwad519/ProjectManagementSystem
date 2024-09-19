@@ -7,6 +7,9 @@ using ProjectManagementSystem.Api.CQRS.Project.Commands.UpdateProject;
 using ProjectManagementSystem.Api.CQRS.Project.Queries.GetById;
 using ProjectManagementSystem.Api.CQRS.Project.Queries.GetList;
 using ProjectManagementSystem.Api.DTOs.Projects;
+using ProjectManagementSystem.Api.Models;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
+using System.Collections.Generic;
 
 namespace ProjectManagementSystem.Api.Controllers;
 [Route("api/[controller]")]
@@ -22,53 +25,116 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetProjectListQueryParams projectParams)
+    public async Task<ResultViewModel<List<ProjectDto>>> GetAll([FromQuery] GetProjectListQueryParams projectParams)
     {
-        //var listParams = _mapper.Map<GetProjectsQuery>(projectParams);
         var query = new GetProjectsQuery(projectParams.IsDescending,projectParams.Name, projectParams.Status, projectParams.CreatedFrom, 
             projectParams.CreatedTo,projectParams.OrderBy);
         var projects = await _mediator.Send(query);
-        return Ok(projects);
+
+        if (projects is null)
+        {
+            return new ResultViewModel<List<ProjectDto>>()
+            {
+                IsSuccess = true,
+                Data = null,
+                Message = "No Projects Found"
+            };
+        }
+        return new ResultViewModel<List<ProjectDto>>()
+        {
+                IsSuccess = true,
+                Data = projects,
+                Message = "Request Success"
+        };
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<ResultViewModel<ProjectDto>> GetById(int id)
     {
         var query = new GetProjectQuery { ProjectId = id };
         var project = await _mediator.Send(query);
-        if (project == null)
+        if (project is null)
         {
-            return NotFound();
+            return new ResultViewModel<ProjectDto>()
+            {
+                IsSuccess = true,
+                Data = null,
+                Message = $"No Project with id {id} found"
+            };
         }
-        return Ok(project);
+        return new ResultViewModel<ProjectDto>()
+        {
+            IsSuccess = true,
+            Data = project,
+            Message = "Request Success"
+        };
     }
+    
     [HttpPost("create")]
-    public async Task<IActionResult> Create(CreateProjectDto request)
+    public async Task<ResultViewModel<ProjectDto>> Create(CreateProjectDto request)
     {
         var command = _mapper.Map<CreateProjectCommand>(request);
         var project = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { id = project.Id }, project);
+        if (project is null)
+        {
+            return new ResultViewModel<ProjectDto>()
+            {
+                IsSuccess = false,
+                Data = null,
+                Message = $"some error occured while creating project"
+            };
+        }
+        return new ResultViewModel<ProjectDto>()
+        {
+            IsSuccess = true,
+            Data = project,
+            Message = "project created successfully"
+        };
+        //return CreatedAtAction(nameof(GetById), new { id = project.Id }, project);
     }
+    
     [HttpPut("update")]
-    public async Task<IActionResult> Update(UpdateProjectDto request)
+    public async Task<ResultViewModel<ProjectDto>> Update(UpdateProjectDto request)
     {
         var command = _mapper.Map<UpdateProjectCommand>(request);
         var project = await _mediator.Send(command);
+    
         if (project is null)
         {
-            return NotFound();
+            return new ResultViewModel<ProjectDto>()
+            {
+                IsSuccess = false,
+                Data = null,
+                Message = $"some error occured while updating project"
+            };
         }
-        return Ok(project);
+        return new ResultViewModel<ProjectDto>()
+        {
+            IsSuccess = true,
+            Data = project,
+            Message = "project updated successfully"
+        };
     }
+    
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<ResultViewModel<ProjectDto>> Delete(int id)
     {
         var command = new DeleteProjectCommand { ProjectId = id };
         var result = await _mediator.Send(command);
+
         if (!result)
         {
-            return NotFound();
+            return new ResultViewModel<ProjectDto>()
+            {
+                IsSuccess = false,
+                Data = null,
+                Message = $"some error occured while deleting project"
+            };
         }
-        return NoContent();
+        return new ResultViewModel<ProjectDto>()
+        {
+            IsSuccess = true,
+            Message = "project deleting successfully"
+        };
     }
 }
