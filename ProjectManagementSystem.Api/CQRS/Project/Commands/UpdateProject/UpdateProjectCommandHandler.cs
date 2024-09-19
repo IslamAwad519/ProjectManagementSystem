@@ -3,10 +3,11 @@ using MediatR;
 using ProjectManagementSystem.Api.DTOs.Projects;
 using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.Repositories.Interfaces;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Commands.UpdateProject;
 
-public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, ProjectDto>
+public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Result<ProjectDto>>
 {
     private readonly IRepository<Models.Project> _projectRepository;
     private readonly IRepository<Models.User> _userRepository;
@@ -21,12 +22,12 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         _mapper = mapper;
     }
 
-    public async Task<ProjectDto> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<Result<ProjectDto>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
         var project =  _projectRepository.GetByID(request.Id);
         if (project == null)
         {
-            return null;
+            return Result<ProjectDto>.Failure($"no project with id :  {request.Id}");
         }
 
         //var users = await _userRepository.GetUsersByIdsAsync(request.UserIds);
@@ -36,6 +37,13 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
          _projectRepository.Update(project);
          _projectRepository.SaveChanges();
 
-        return _mapper.Map<ProjectDto>(project);
+        var projectDto = _mapper.Map<ProjectDto>(project);
+        if (projectDto == null)
+        {
+            return Result<ProjectDto>.Failure("fail to updated project");
+        }
+
+
+        return Result<ProjectDto>.Success(projectDto, "Project updated successfully.");
     }
 }

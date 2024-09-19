@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Api.DTOs.Projects;
 using ProjectManagementSystem.Api.Enums;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Commands.UpdateProject;
 
-public class UpdateProjectCommand : IRequest<ProjectDto>
+public class UpdateProjectCommand : IRequest<Result<ProjectDto>>
 {
     public int Id { get; set; }
     public string Name { get; set; }

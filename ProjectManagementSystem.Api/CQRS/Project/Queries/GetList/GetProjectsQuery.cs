@@ -5,7 +5,7 @@ using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Queries.GetList;
 
-public class GetProjectsQuery : IRequest<List<ProjectDto>>
+public class GetProjectsQuery : IRequest<Result<List<ProjectDto>>>
 {
     public string? Name { get; set; } // For searching by name
     public ProjectStatus? Status { get; set; } 

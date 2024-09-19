@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using ProjectManagementSystem.Api.DTOs.Projects;
+using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.Repositories.Interfaces;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Queries.GetList;
 
-public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, List<ProjectDto>>
+public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, Result<List<ProjectDto>>>
 {
     private readonly IRepository<Models.Project> _projectRepository;
     private readonly IMapper _mapper;
@@ -17,7 +18,7 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, List<Pr
         _mapper = mapper;
     }
 
-    public async Task<List<ProjectDto>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<ProjectDto>>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
         var query =  _projectRepository.GetAll();
 
@@ -57,7 +58,13 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, List<Pr
             };
         }
         var projects = query.ToList();
-        return _mapper.Map<List<ProjectDto>>(projects);
+        var projectsDto =  _mapper.Map<List<ProjectDto>>(projects);
+
+        if (projectsDto.Count == 0)
+        {
+            return Result<List<ProjectDto>>.Failure("No project with found match you criteria");
+        }
+        return Result<List<ProjectDto>>.Success(projectsDto, "Projects found successfully.");
     }
 }
 

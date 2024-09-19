@@ -4,7 +4,7 @@ using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Queries.GetById;
 
-public class GetProjectQuery : IRequest<ProjectDto>
+public class GetProjectQuery : IRequest<Result<ProjectDto>>
 {
     public int ProjectId { get; set; }
 }

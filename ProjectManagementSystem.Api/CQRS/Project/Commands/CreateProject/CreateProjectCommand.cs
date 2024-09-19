@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Api.DTOs.Projects;
 using ProjectManagementSystem.Api.Enums;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
 namespace ProjectManagementSystem.Api.CQRS.Project.Commands.CreateProject;
 
-public class CreateProjectCommand : IRequest<ProjectDto>
+public class CreateProjectCommand : IRequest<Result<ProjectDto>>
 {
     public string Name { get; set; }
     public string Description { get; set; }
