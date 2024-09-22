@@ -6,8 +6,13 @@ using ProjectManagementSystem.Api.CQRS.TaskItem.Commands;
 using ProjectManagementSystem.Api.CQRS.TaskItem.Queries;
 using ProjectManagementSystem.Api.Exceptions.Error;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
-using ProjectManagementSystem.Api.ViewModels.TaskItemVM;
 using ProjectManagementSystem.Api.Enums;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Commands.CreateTask;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Commands.UpdateTask;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Commands.DeleteTask;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Queries.GetList;
+using ProjectManagementSystem.Api.Dtos.Tasks;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Queries.GetById;
 namespace ProjectManagementSystem.Api.Controllers;
 
 
@@ -25,126 +30,89 @@ public class TaskController : ControllerBase
     }
 
 
-    [HttpGet("GetAll")]
-    public async Task<ResultViewModel<IEnumerable<TaskItemVM>>> GetAllTasksInAllProjects()
+    [HttpGet]
+    public async Task<ResultViewModel<List<TaskItemDto>>> GetAll([FromQuery] GetTaskListQueryParams taskParams)
     {
-        var query = new GetAllTasksQuery();
-        var tasksDto = await _mediator.Send(query);
-        var tasksResponseVM = _mapper.Map<List<TaskItemVM>>(tasksDto);
-        return ResultViewModel<IEnumerable<TaskItemVM>>.Success(tasksResponseVM, "Tasks retrieved successfully.");
+        var query = new GetAllTasksQuery(taskParams.IsDescending, taskParams.Name, taskParams.Status, taskParams.CreatedFrom,
+            taskParams.CreatedTo, taskParams.OrderBy);
+        var result = await _mediator.Send(query);
+
+        return new ResultViewModel<List<TaskItemDto>>()
+        {
+            IsSuccess = result.IsSuccess,
+            Data = result.Data,
+            Message = result.Message
+        };
     }
+
 
     [HttpGet("{id}")]
-    public async Task<ResultViewModel<TaskItemVM>> GetTaskById([FromRoute] int id)
+    public async Task<ResultViewModel<TaskItemDto>> GetById(int id)
     {
         var query = new GetTaskByIdQuery { Id = id };
-        var taskDto = await _mediator.Send(query);
+        var result = await _mediator.Send(query);
 
-        if (taskDto == null)
+        return new ResultViewModel<TaskItemDto>()
         {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ResourceNotFound, "Task not found.");
-        }
-        var taskResponseVM = _mapper.Map<TaskItemVM>(taskDto);
-        return ResultViewModel<TaskItemVM>.Success(taskResponseVM, "Task retrieved successfully.");
-    }
-
-
-    [HttpPut("{id}")]
-    public async Task<ResultViewModel<TaskItemVM>> UpdateTask(int id, [FromBody] UpdateTaskDto dto)
-    {
-        // Validate TaskId from the route and request body
-        if (id != dto.TaskId)
-        {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ValidationError, "Task ID mismatch");
-        }
-
-        // Validate TaskStatus 
-        if ((int)dto.TaskStatus < 0 || (int)dto.TaskStatus > 2)
-        {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ValidationError, "Invalid task status");
-        }
-
-        var command = new UpdateTaskCommand
-        {
-            TaskId = dto.TaskId,
-            Title = dto.Title,
-            Description = dto.Description,
-            TaskStatus = dto.TaskStatus,
-            UserId = dto.UserId
+            IsSuccess = result.IsSuccess,   
+            Data = result.Data,             
+            Message = result.Message        
         };
-
-        var updatedTaskDto = await _mediator.Send(command);
-        if (updatedTaskDto == null)
-        {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ResourceNotFound, "Task not found");
-        }
-        var updatedTaskVM = _mapper.Map<TaskItemVM>(updatedTaskDto);
-
-        return ResultViewModel<TaskItemVM>.Success(updatedTaskVM, "Task updated successfully");
     }
 
 
+    [HttpPut("update")]
+    public async Task<ResultViewModel<TaskItemDto>> Update(UpdateTaskDto request)
+    {
+        var command = _mapper.Map<UpdateTaskCommand>(request);
+        var result = await _mediator.Send(command);
+
+        return new ResultViewModel<TaskItemDto>
+        {
+            IsSuccess = result.IsSuccess,
+            Data = result.Data,
+            Message = result.Message
+        };
+    }
 
     [HttpDelete("{id}")]
-    public async Task<ResultViewModel<bool>> DeleteTask([FromRoute] int id)
+    public async Task<ResultViewModel<TaskItemDto>> Delete(int id)
     {
-        var result = await _mediator.Send(new DeleteTaskCommand(id));
+        var command = new DeleteTaskCommand { TaskId = id };
+        var result = await _mediator.Send(command);
 
-        if (result.IsSuccess)
+        return new ResultViewModel<TaskItemDto>()
         {
-            return ResultViewModel<bool>.Success(true, result.Message);
-        }
-        return ResultViewModel<bool>.Failure(result.ErrorCode, result.Message);
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
+        };
     }
 
-
-    [HttpPost("createTask")]
-    public async Task<ResultViewModel<TaskItemVM>> CreateTask(CreateTaskDto request)
+    [HttpPost("create")]
+    public async Task<ResultViewModel<TaskItemDto>> Create(CreateTaskDto request)
     {
-        var projects = await _mediator.Send(new GetProjectListForTasksQuery());
-        var selectedProjects = projects.Where(p => request.ProjectIds.Contains(p.Id)).ToList();
-        if (selectedProjects.Count != request.ProjectIds.Count)
+        // Ensure lists are not empty
+        if (!request.ProjectIds.Any() || !request.AssignedUserIds.Any())
         {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ValidationError, "One or more selected projects do not exist.");
-        }
-        var users = await _mediator.Send(new GetUserListForTasksQuery { ProjectIds = request.ProjectIds });
-        var assignedUsers = users.Where(u => request.AssignedUserIds.Contains(u.Id)).ToList();
-        if (assignedUsers.Count != request.AssignedUserIds.Count)
-        {
-            return ResultViewModel<TaskItemVM>.Failure(ErrorCode.ValidationError, "One or more users not found.");
+            return new ResultViewModel<TaskItemDto>
+            {
+                IsSuccess = false,
+                Message = "ProjectId and UserId cannot be empty."
+            };
         }
 
         var command = _mapper.Map<CreateTaskCommand>(request);
-        var taskDto = await _mediator.Send(command);
-        var taskResponseVM = _mapper.Map<TaskItemVM>(taskDto);
-        return ResultViewModel<TaskItemVM>.Success(taskResponseVM, "Task created successfully.");
-    }
+        var result = await _mediator.Send(command);
 
-
-    [HttpGet("search")]
-    public async Task<ResultViewModel<IEnumerable<TaskItemDto>>> SearchTaskByTaskName([FromQuery] string taskName)
-    {
-        var result = await _mediator.Send(new SearchTaskByTaskNameQuery(taskName));
-        if (result.IsSuccess)
+        return new ResultViewModel<TaskItemDto>
         {
-            return ResultViewModel<IEnumerable<TaskItemDto>>.Success(result.Data, result.Message);
-        }
-
-        return ResultViewModel<IEnumerable<TaskItemDto>>.Failure(result.ErrorCode, result.Message);
+            IsSuccess = result.IsSuccess,
+            Data = result.Data,
+            Message = result.Message
+        };
     }
 
-    [HttpGet("filter")]
-    public async Task<ResultViewModel<List<TaskItemDto>>> FilterTasks([FromQuery] string? projectName, [FromQuery] TaskItemStatus? taskStatus)
-    {
-        var query = new FilterTasksQuery(projectName, taskStatus);
-        // Send the query to the mediator and get the result
-        var result = await _mediator.Send(query);
-        if (result.IsSuccess)
-        {
-            return ResultViewModel<List<TaskItemDto>>.Success(result.Data, result.Message);
-        }
-        return ResultViewModel<List<TaskItemDto>>.Failure(result.ErrorCode, result.Message);
-    }
+
 
 
 

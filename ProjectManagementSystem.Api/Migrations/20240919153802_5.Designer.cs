@@ -12,8 +12,8 @@ using ProjectManagementSystem.Api.Data;
 namespace ProjectManagementSystem.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240917193059_4")]
-    partial class _4
+    [Migration("20240919153802_5")]
+    partial class _5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -292,9 +292,6 @@ namespace ProjectManagementSystem.Api.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");

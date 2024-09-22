@@ -1,52 +1,13 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
-using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.Services.VerifyAccount;
 
-namespace ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands
+namespace ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.VerifyOTP
 {
-    public class GenerateOTPCommand : IRequest<GenerateOTPResponseDto>
-    {
-        public GenerateOTPRequestDto GenerateOTPRequestDto { get; set; }
-
-        public GenerateOTPCommand(GenerateOTPRequestDto generateOTPRequestDto)
-        {
-            GenerateOTPRequestDto = generateOTPRequestDto;
-        }
-    }
-
-    public class VerifyOTPCommand : IRequest<VerifyOTPResponseDto>
-    {
-        public string Email { get; set; }
-        public string OTPCode { get; set; }
-    }
-
-    public class GenerateOTPCommandHandler : IRequestHandler<GenerateOTPCommand, GenerateOTPResponseDto>
-    {
-        private readonly IOTPService _otpService;
-
-        public GenerateOTPCommandHandler(IOTPService otpService)
-        {
-            _otpService = otpService;
-        }
-
-        public async Task<GenerateOTPResponseDto> Handle(GenerateOTPCommand request, CancellationToken cancellationToken)
-        {
-            var otpCode = await _otpService.GenerateAndSendOTPAsync(request.GenerateOTPRequestDto.Email);
-
-            return new GenerateOTPResponseDto
-            {
-                IsSuccess = true,
-                Message = "OTP has been sent to your email."
-            };
-        }
-    }
-
     public class VerifyOTPCommandHandler : IRequestHandler<VerifyOTPCommand, VerifyOTPResponseDto>
     {
         private readonly IOTPService _otpService;
-        private readonly IUserService _userService; 
+        private readonly IUserService _userService;
 
         public VerifyOTPCommandHandler(IOTPService otpService, IUserService userService)
         {
@@ -86,6 +47,4 @@ namespace ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands
             };
         }
     }
-
 }
-
