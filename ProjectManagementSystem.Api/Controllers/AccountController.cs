@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
+using ProjectManagementSystem.Api.CQRS.User.Register.Commands;
 using ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
@@ -12,6 +13,7 @@ using ProjectManagementSystem.Api.DTOs.Auth;
 using ProjectManagementSystem.Api.Exceptions.Error;
 using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.ViewModels.ForgetPassword;
+using ProjectManagementSystem.Api.ViewModels.RegisterUserVM;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 using ProjectManagementSystem.Api.ViewModels.VerifyAccount;
 
@@ -42,6 +44,26 @@ public class AccountController : ControllerBase
 
         return Ok(result);
     }
+
+
+    [HttpPost]
+    public async Task<ResultViewModelDynamic> Register(RegisterUserVM registerUserVM)
+    {
+        var registerUserRequestDTO = registerUserVM.MapOne<RegisterUserRequestDTO>();
+
+        var resultDTO = await _mediator.Send(new RegisterUserCommand(registerUserRequestDTO));
+
+        if (!resultDTO.IsSuccess)
+        {
+            return ResultViewModelDynamic.Failure( ErrorCode.BadRequest, resultDTO.Message);
+        }
+
+        return ResultViewModelDynamic.Success(resultDTO.Message);
+    }
+
+
+
+
     //[Authorize]
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
