@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ProjectManagementSystem.Api.Services.VerifyAccount
+namespace ProjectManagementSystem.Api.Services.IOTPService
 {
     public class OTPService : IOTPService
     {

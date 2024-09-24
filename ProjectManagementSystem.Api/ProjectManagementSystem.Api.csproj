@@ -28,8 +28,7 @@
     <Folder Include="CQRS\User\Login\Queries\" />
     <Folder Include="CQRS\User\Register\Commands\" />
     <Folder Include="CQRS\User\Register\Queries\" />
-    <Folder Include="CQRS\User\RestePassword\Commands\" />
-    <Folder Include="CQRS\User\RestePassword\Queries\" />
+    <Folder Include="CQRS\User\ResetPassword\Queries\" />
   </ItemGroup>
 
 </Project>

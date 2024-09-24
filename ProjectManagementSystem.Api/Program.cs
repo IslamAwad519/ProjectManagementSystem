@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectManagementSystem.Api.Data;
+using ProjectManagementSystem.Api.Data.IDbInitializer;
 using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.Helpers.GenerateToken;
 using ProjectManagementSystem.Api.Models;
@@ -11,6 +12,7 @@ using ProjectManagementSystem.Api.Profiles;
 using ProjectManagementSystem.Api.Repositories;
 using ProjectManagementSystem.Api.Repositories.Interfaces;
 using ProjectManagementSystem.Api.Services.ForgetPassword;
+using ProjectManagementSystem.Api.Services.IOTPService;
 using ProjectManagementSystem.Api.Services.VerifyAccount;
 using System.Text;
 
@@ -98,10 +100,21 @@ var app = builder.Build();
 
     app.UseHttpsRedirection();
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
 
+    // Initialize the database.
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var context = services.GetRequiredService<ApplicationDbContext>();
+
+        await DbInitializer.Initialize(userManager, roleManager, context);
+    }
     app.Run();
 
 }

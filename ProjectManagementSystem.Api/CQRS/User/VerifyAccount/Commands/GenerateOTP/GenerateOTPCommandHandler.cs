@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
-using ProjectManagementSystem.Api.Services.VerifyAccount;
+using ProjectManagementSystem.Api.Services.IOTPService;
 
 namespace ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.GenerateOTP
 {

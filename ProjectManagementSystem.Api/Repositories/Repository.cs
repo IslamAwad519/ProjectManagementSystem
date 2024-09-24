@@ -58,7 +58,7 @@ public class Repository<T> : IRepository<T> where T : BaseModel
         //return _context.Set<T>().Where(x => !x.Deleted).AsNoTrackingWithIdentityResolution();
     }
 
-    public T GetByID(int id)
+    public T? GetByID(int id)
     {
         //return _context.Find<T>(id);
         return GetAll().FirstOrDefault(x => x.Id == id);

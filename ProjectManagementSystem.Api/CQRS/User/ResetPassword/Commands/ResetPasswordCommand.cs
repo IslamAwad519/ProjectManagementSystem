@@ -1,14 +1,15 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectManagementSystem.Api.DTOs.Auth;
+using ProjectManagementSystem.Api.DTOs.ResetPassword;
 using ProjectManagementSystem.Api.Exceptions.Error;
 using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 
-namespace ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands
+namespace ProjectManagementSystem.Api.CQRS.User.ResetPassword.Commands
 {
 
-    public class ResetPasswordCommand : IRequest<ResultViewModel<ResetPasswordToReturnDto>>
+    public class ResetPasswordCommand : IRequest<ResultViewModel<ResetPasswordRequest>>
     {
         public string Email { get; set; }
         public string Token { get; set; }
@@ -17,7 +18,7 @@ namespace ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands
     }
 
 
-    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResultViewModel<ResetPasswordToReturnDto>>
+    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResultViewModel<ResetPasswordRequest>>
     {
         UserManager<ApplicationUser> _userManager;
 
@@ -26,26 +27,26 @@ namespace ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands
             _userManager = userManager;
         }
 
-        public async Task<ResultViewModel<ResetPasswordToReturnDto>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<ResultViewModel<ResetPasswordRequest>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
             {
-                return ResultViewModel<ResetPasswordToReturnDto>.Failure(ErrorCode.ResourceNotFound, "User Not Found");
+                return ResultViewModel<ResetPasswordRequest>.Failure(ErrorCode.ResourceNotFound, "User Not Found");
             }
 
             await _userManager.ResetPasswordAsync(user, request.Token, request.newPassword);
-            var result = new ResetPasswordToReturnDto()
+            var result = new ResetPasswordRequest()
             {
                 Email = request.Email,
                 newPassword = request.newPassword,
                 ConfirmPassword = request.ConfirmPassword,
             };
             if (result == null || result.ConfirmPassword != result.newPassword)
-                return ResultViewModel<ResetPasswordToReturnDto>.Failure(ErrorCode.BadRequest, "Confirm Password Cant Match Password");
+                return ResultViewModel<ResetPasswordRequest>.Failure(ErrorCode.BadRequest, "Confirm Password Cant Match Password");
 
-            return ResultViewModel<ResetPasswordToReturnDto>.Success(result , "Your password has been successfully reset. You can now log in with your new password.");
+            return ResultViewModel<ResetPasswordRequest>.Success(result , "Your password has been successfully reset. You can now log in with your new password.");
 
         }
     }

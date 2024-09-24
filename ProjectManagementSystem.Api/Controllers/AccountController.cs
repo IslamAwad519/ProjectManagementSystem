@@ -1,20 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
-using ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands;
-using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands;
+using ProjectManagementSystem.Api.CQRS.User.ResetPassword.Commands;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
 using ProjectManagementSystem.Api.DTOs.Auth;
-using ProjectManagementSystem.Api.Exceptions.Error;
-using ProjectManagementSystem.Api.Helpers;
-
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.GenerateOTP;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.VerifyOTP;
+using ProjectManagementSystem.Api.DTOs.ChangePassword;
+using ProjectManagementSystem.Api.DTOs.ResetPassword;
 
 namespace ProjectManagementSystem.Api.Controllers;
 
@@ -31,32 +28,32 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginUserDto request)
+    public async Task<ResultViewModel<AuthResponse?>> Login([FromBody] LoginUserDto request)
     {
         var query = _mapper.Map<LoginUserQuery>(request);
 
         var result = await _mediator.Send(query);
-        if (result is null)
+    
+        return new ResultViewModel<AuthResponse?>()
         {
-            return Unauthorized("Password or username is wrong");
-        }
-
-        return Ok(result);
+            IsSuccess = result.IsSuccess,
+            Data = result.Data,
+            Message = result.Message
+        };
     }
-    //[Authorize]
+    
     [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
+    public async Task<ResultViewModel<ChangePasswordResponse>> ChangePassword([FromBody] ChangePasswordDto request)
     {
         var command = _mapper.Map<ChangePasswordCommand>(request);
 
         var result = await _mediator.Send(command);
-        if (result)
+        return new ResultViewModel<ChangePasswordResponse>()
         {
-            return Ok("Password changed successfully");
-        }
-        return BadRequest("Something went wrong !");
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
+        };
     }
-
 
     [HttpPost("forgot-password")]
     public async Task<ResultViewModel<ForgotPasswordResponseDto>> ForgotPassword(string email)
@@ -96,12 +93,16 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("ResetPassword")]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordToReturnDto request)
+    public async Task<ResultViewModel<ResetPasswordToReturnDto>> ResetPassword([FromBody] ResetPasswordRequest request)
     {
-        var Command = _mapper.Map<ResetPasswordCommand>(request);
-        var result = await _mediator.Send(Command);
+        var command = _mapper.Map<ResetPasswordCommand>(request);
+        var result = await _mediator.Send(command);
 
-        return Ok(result);
+        return new ResultViewModel<ResetPasswordToReturnDto>()
+        {
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
+        };
     }
 }
 

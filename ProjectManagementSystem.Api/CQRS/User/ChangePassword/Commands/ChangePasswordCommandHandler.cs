@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectManagementSystem.Api.Models;
+using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 using System.Security.Claims;
 
 namespace ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 
-public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, bool>
+public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -18,32 +19,32 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         //TODO: Change this line
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {
-            return false;
+            return Result.Failure($"must be authenticated, please sign in");
         }
 
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            return false;
+            return Result.Failure($"user not found !");
         }
 
         if (request.NewPassword != request.ConfirmPassword)
         {
-            return false;
+            return Result.Failure($"username or password incorrect!");
         }
 
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
         if (!changePasswordResult.Succeeded)
         {
-            return false;
+            return Result.Failure($"error occur while changing the password!");
         }
 
-        return true;
+        return Result.Success("Password changed successfully");
     }
 }

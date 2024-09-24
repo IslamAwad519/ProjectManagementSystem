@@ -1,4 +1,4 @@
-﻿namespace ProjectManagementSystem.Api.Services.VerifyAccount
+﻿namespace ProjectManagementSystem.Api.Services.IOTPService
 {
     public interface IOTPService
     {

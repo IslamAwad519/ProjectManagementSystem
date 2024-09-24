@@ -7,7 +7,7 @@ public interface IRepository<T> where T : BaseModel
 {
     IQueryable<T> GetAll();
     IQueryable<T> Get(Expression<Func<T, bool>> predicate);
-    T GetByID(int id);
+    T? GetByID(int id);
     T GetWithTrackinByID(int id);
     T Add(T entity);
     void Update(T entity);

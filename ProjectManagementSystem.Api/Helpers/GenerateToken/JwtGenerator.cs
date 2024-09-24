@@ -16,15 +16,16 @@ public class JwtGenerator : IJwtGenerator
         _jwtOptions = jwtOptions.Value;
     }
 
-    public (string token, int expiresIn) GenerateToken(ApplicationUser user)
+    public (string token, int expiresIn) GenerateToken(ApplicationUser user, IList<string> roles)
     {
-        Claim[] claims = [
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
-            new(JwtRegisteredClaimNames.GivenName, user.UserName!),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        ];
-
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+        // Add multiple role claims
+        claims.AddRange(roles.Select(role => new Claim("role", role)));
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
 
         var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
