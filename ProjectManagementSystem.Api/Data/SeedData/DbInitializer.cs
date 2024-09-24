@@ -2,7 +2,7 @@
 using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.Models;
 
-namespace ProjectManagementSystem.Api.Data.IDbInitializer;
+namespace ProjectManagementSystem.Api.Data.SeedData;
 
 public static class DbInitializer
 {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectManagementSystem.Api.Data;
-using ProjectManagementSystem.Api.Data.IDbInitializer;
+using ProjectManagementSystem.Api.Data.SeedData;
 using ProjectManagementSystem.Api.Helpers;
 using ProjectManagementSystem.Api.Helpers.GenerateToken;
 using ProjectManagementSystem.Api.Models;
