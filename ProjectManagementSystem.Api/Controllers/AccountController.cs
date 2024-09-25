@@ -12,6 +12,9 @@ using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.GenerateOTP;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.VerifyOTP;
 using ProjectManagementSystem.Api.DTOs.ChangePassword;
 using ProjectManagementSystem.Api.DTOs.ResetPassword;
+using ProjectManagementSystem.Api.CQRS.User.GetAllUsers.Queries;
+using ProjectManagementSystem.Api.CQRS.User.GetUserById.Queries;
+using ProjectManagementSystem.Api.Enums;
 
 namespace ProjectManagementSystem.Api.Controllers;
 
@@ -33,7 +36,7 @@ public class AccountController : ControllerBase
         var query = _mapper.Map<LoginUserQuery>(request);
 
         var result = await _mediator.Send(query);
-    
+
         return new ResultViewModel<AuthResponse?>()
         {
             IsSuccess = result.IsSuccess,
@@ -41,7 +44,7 @@ public class AccountController : ControllerBase
             Message = result.Message
         };
     }
-    
+
     [HttpPost("change-password")]
     public async Task<ResultViewModel<ChangePasswordResponse>> ChangePassword([FromBody] ChangePasswordDto request)
     {
@@ -58,7 +61,7 @@ public class AccountController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<ResultViewModel<ForgotPasswordResponseDto>> ForgotPassword(string email)
     {
-        var command = new ForgotPasswordCommand  { Email = email };
+        var command = new ForgotPasswordCommand { Email = email };
         var result = await _mediator.Send(command);
         return new ResultViewModel<ForgotPasswordResponseDto>
         {
@@ -71,25 +74,25 @@ public class AccountController : ControllerBase
     public async Task<ResultViewModel<GenerateOTPResponseDto>> GenerateOTP(string email)
     {
         var command = new GenerateOTPCommand { Email = email };
-        var result = await _mediator.Send(command); 
+        var result = await _mediator.Send(command);
         return new ResultViewModel<GenerateOTPResponseDto>()
         {
-            IsSuccess = result.IsSuccess, 
-            Message = result.Message     
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
         };
     }
 
     [HttpPost("verify-otp")]
     public async Task<ResultViewModel<VerifyOTPResponseDto>> VerifyOTP(VerifyOTPRequestDto otpVerificationRequest)
     {
-       var command = _mapper.Map<VerifyOTPCommand>(otpVerificationRequest);
-       var result = await _mediator.Send(command);
-       return new ResultViewModel<VerifyOTPResponseDto>
-       {
+        var command = _mapper.Map<VerifyOTPCommand>(otpVerificationRequest);
+        var result = await _mediator.Send(command);
+        return new ResultViewModel<VerifyOTPResponseDto>
+        {
             IsSuccess = result.IsSuccess,
             Message = result.Message
         };
-    
+
     }
 
     [HttpPost("ResetPassword")]
@@ -99,6 +102,28 @@ public class AccountController : ControllerBase
         var result = await _mediator.Send(command);
 
         return new ResultViewModel<ResetPasswordToReturnDto>()
+        {
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
+        };
+    }
+
+
+    [HttpGet("Get All Users")]
+
+    public async Task<ActionResult<GetAllUsersDto>> GetAllUsers([FromQuery] string? search, [FromQuery] UserStatus? status, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetUsersQuery(search, status, pageIndex, pageSize);
+        var result = await _mediator.Send(query);
+       return Ok(result);
+    }
+
+
+    [HttpGet("{id}")]
+    public async Task<ResultViewModel<GetAllUsersDto>> GetUserById(string id)
+    {
+        var result = await _mediator.Send(new GetUserByIdQuery(id));
+        return new ResultViewModel<GetAllUsersDto>()
         {
             IsSuccess = result.IsSuccess,
             Message = result.Message
