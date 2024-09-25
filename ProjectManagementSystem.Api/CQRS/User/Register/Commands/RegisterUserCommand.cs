@@ -13,7 +13,7 @@ namespace ProjectManagementSystem.Api.CQRS.User.Register.Commands
     string Password,
     string ConfirmPassword);
 
-    public class RegisterUserCommandHandler() : IRequestHandler<RegisterUserCommand, ResultDTO>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, ResultDTO>
     {
         private readonly IMediator _mediator;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -22,12 +22,13 @@ namespace ProjectManagementSystem.Api.CQRS.User.Register.Commands
 
 
 
-        public RegisterUserCommandHandler( IMediator mediator , UserManager<ApplicationUser> userManager , IOTPService oTPService , IRepository<ProjectManagementSystem.Api.Models.User> repository) :this()
+        public  RegisterUserCommandHandler( IMediator mediator , UserManager<ApplicationUser> userManager ,
+            IOTPService oTPService , IRepository<ProjectManagementSystem.Api.Models.User> repository) 
         {
-            this._mediator = mediator;
-            this._userManager = userManager;
-            this._otpService = oTPService;
-            this._userRepository = repository;
+            _mediator = mediator;
+           _userManager = userManager;
+            _otpService = oTPService;
+            _userRepository = repository;
             
         }
         public async Task<ResultDTO> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -61,8 +62,10 @@ namespace ProjectManagementSystem.Api.CQRS.User.Register.Commands
             if (result.Succeeded)
             {
                 var opt = await _otpService.GenerateAndSendOTPAsync(newUser.Email);
-                _userRepository.Add(new Models.User() { UserName = newUser.UserName , IsDeleted=false });
-                _userRepository.SaveChanges();
+
+                //_userRepository.Add(new Models.User() { UserName = newUser.UserName , IsDeleted=false });
+                //_userRepository.SaveChanges();
+
                 return ResultDTO.Success("User registered successfully");
 
             }
