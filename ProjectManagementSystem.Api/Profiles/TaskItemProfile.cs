@@ -21,8 +21,8 @@ namespace ProjectManagementSystem.Api.Profiles
               .ForMember(dest => dest.TaskStatus, opt => opt.MapFrom(src => Enums.TaskItemStatus.ToDo))
               .AfterMap((src, dest) =>
               {
-                  dest.ProjectId = src.ProjectIds.FirstOrDefault(); // Set ProjectId
-                  dest.UserId = src.AssignedUserIds.FirstOrDefault(); // Set UserId
+                  dest.ProjectId = src.ProjectIds.FirstOrDefault(); 
+                  dest.UserId = src.AssignedUserIds.FirstOrDefault(); 
               });
 
             CreateMap<TaskItem, TaskItemDto>()

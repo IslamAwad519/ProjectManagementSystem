@@ -22,7 +22,7 @@ namespace ProjectManagementSystem.Api.Services.IOTPService
             var otpCode = new Random().Next(100000, 999999).ToString(); // Generate a 6-digit OTP
             var expiryDate = DateTime.UtcNow.AddMinutes(1); // OTP valid for 1 minute
 
-            // Save OTP to temporary store or database
+            // Save OTP to temporary store 
             OtpStore[email] = (otpCode, expiryDate);
 
             // Send OTP via email
@@ -43,7 +43,6 @@ namespace ProjectManagementSystem.Api.Services.IOTPService
                 }
             }
 
-            // OTP is invalid or expired
             return false;
         }
     }
