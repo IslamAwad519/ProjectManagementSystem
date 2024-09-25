@@ -25,6 +25,15 @@ public static class DbInitializer
             };
             await userManager.CreateAsync(admin, "Password1!");
             await userManager.AddToRoleAsync(admin, AppRoles.Admin);
+
+            var manager = new ApplicationUser
+            {
+                UserName = "manager@test.com",
+                Email = "manager@test.com",
+                PhoneNumber = "01010157275",
+            };
+            await userManager.CreateAsync(manager, "Password1!");
+            await userManager.AddToRoleAsync(manager, AppRoles.Manager);
         }
     }
 }
