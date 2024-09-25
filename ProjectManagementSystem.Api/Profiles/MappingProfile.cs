@@ -6,6 +6,8 @@ using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands.VerifyOTP;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
 using ProjectManagementSystem.Api.DTOs.Auth;
+using ProjectManagementSystem.Api.DTOs.DashBoard;
+using ProjectManagementSystem.Api.Models;
 
 
 namespace ProjectManagementSystem.Api.Profiles;
