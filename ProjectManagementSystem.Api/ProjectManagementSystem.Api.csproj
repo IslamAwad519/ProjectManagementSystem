@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Folder Include="CQRS\TaskItem\" />
 	  <Folder Include="CQRS\User\Login\Commands\" />
 	  <Folder Include="CQRS\User\Login\Queries\" />
     <Folder Include="CQRS\User\Login\Commands\" />

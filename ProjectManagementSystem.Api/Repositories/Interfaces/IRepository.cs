@@ -10,10 +10,14 @@ public interface IRepository<T> where T : BaseModel
     T GetByID(int id);
     T GetWithTrackinByID(int id);
     T Add(T entity);
+    Task<T> FirstAsync(Expression<Func<T, bool>> predicate);
+
     void Update(T entity);
     void Delete(T entity);
     void Delete(int id);
     T First(Expression<Func<T, bool>> predicate);
+    Task SaveChangesAsync();
+    Task<T> UpdateAsync(T entity);
 
     void SaveChanges();
 }

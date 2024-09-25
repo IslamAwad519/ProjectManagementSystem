@@ -8,6 +8,7 @@ using ProjectManagementSystem.Api.Exceptions.Error;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
 using ProjectManagementSystem.Api.ViewModels.TaskItemVM;
 using ProjectManagementSystem.Api.Enums;
+using ProjectManagementSystem.Api.Helpers;
 namespace ProjectManagementSystem.Api.Controllers;
 
 
@@ -147,6 +148,20 @@ public class TaskController : ControllerBase
     }
 
 
+    [HttpPut]
+    public async Task<ResultViewModel<int>> ChangeTaskStatus(TaskStatusViewModel taskStatusViewModel)
+    {
+        var taskStatusDTO = taskStatusViewModel.MapOne<TaskItemStatusDTO>();
+
+        var resultDTO = await _mediator.Send(new ChangeTaskStatusCommand(taskStatusDTO));
+
+        if (!resultDTO.IsSuccess)
+        {
+            return ResultViewModel<int>.Failure(ErrorCode.BadRequest, resultDTO.Message);
+        }
+
+        return ResultViewModel<int>.Success(resultDTO.Data);
+    }
 
 }
 

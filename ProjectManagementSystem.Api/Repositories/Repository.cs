@@ -47,6 +47,11 @@ public class Repository<T> : IRepository<T> where T : BaseModel
         _context.Set<T>().Where(x => x.Id == id).ExecuteDelete();
     }
 
+    public async Task<T> FirstAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await GetAll().Where(predicate).FirstOrDefaultAsync();
+    }
+
     public IQueryable<T> Get(Expression<Func<T, bool>> predicate)
     {
         return GetAll().Where(predicate);
@@ -80,5 +85,16 @@ public class Repository<T> : IRepository<T> where T : BaseModel
     public void SaveChanges()
     {
         _context.SaveChanges();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<T> UpdateAsync(T entity)
+    {
+        _context.Set<T>().Update(entity);
+        return await Task.FromResult(entity);
     }
 }

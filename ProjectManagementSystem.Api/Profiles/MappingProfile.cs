@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProjectManagementSystem.Api.CQRS.TaskItem.Commands;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
 using ProjectManagementSystem.Api.CQRS.User.Register.Commands;
@@ -8,9 +9,11 @@ using ProjectManagementSystem.Api.Dtos.VerifyAccount;
 using ProjectManagementSystem.Api.DTOs.Auth;
 using ProjectManagementSystem.Api.DTOs.ResultDTO;
 using ProjectManagementSystem.Api.Exceptions.Error;
+using ProjectManagementSystem.Api.Models;
 using ProjectManagementSystem.Api.ViewModels.ForgetPassword;
 using ProjectManagementSystem.Api.ViewModels.RegisterUserVM;
 using ProjectManagementSystem.Api.ViewModels.ResultViewModel;
+using ProjectManagementSystem.Api.ViewModels.TaskItemVM;
 using ProjectManagementSystem.Api.ViewModels.VerifyAccount;
 
 namespace ProjectManagementSystem.Api.Profiles;
@@ -42,5 +45,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data))
             .ForMember(dest => dest.IsSuccess, opt => opt.MapFrom(src => src.IsSuccess))
             .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message));
+
+        CreateMap<TaskItemStatusDTO, TaskStatusViewModel>().ReverseMap();
     }
 }

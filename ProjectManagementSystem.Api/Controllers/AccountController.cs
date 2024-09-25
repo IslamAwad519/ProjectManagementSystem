@@ -2,10 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Api.CQRS.User.BlockUser;
 using ProjectManagementSystem.Api.CQRS.User.ChangePassword.Commands;
 using ProjectManagementSystem.Api.CQRS.User.Login.Queries;
 using ProjectManagementSystem.Api.CQRS.User.Register.Commands;
 using ProjectManagementSystem.Api.CQRS.User.RestePassword.Commands;
+using ProjectManagementSystem.Api.CQRS.User.UnBlockUser;
 using ProjectManagementSystem.Api.CQRS.User.VerifyAccount.Commands;
 using ProjectManagementSystem.Api.Dtos.ForgetPassword;
 using ProjectManagementSystem.Api.Dtos.VerifyAccount;
@@ -127,7 +129,32 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    
+    [HttpPost("block")]
+    public async Task<ResultViewModelDynamic> BlockUser(int BlockedID)
+    {
+        var result = await _mediator.Send(new BlockUserCommand(BlockedID));
+
+        if (!result.IsSuccess)
+        {
+            return ResultViewModelDynamic.Failure(ErrorCode.InternalserverError,result.Message);
+        }
+
+        return ResultViewModelDynamic.Success(result.Message);
+    }
+
+
+    [HttpDelete]
+    public async Task<ResultViewModelDynamic> UnblockUser(int BlockedID)
+    {
+        var result = await _mediator.Send(new UnBlockUserCommand(BlockedID));
+
+        if (!result.IsSuccess)
+        {
+            return ResultViewModelDynamic.Failure(ErrorCode.BadRequest,result.Message);
+        }
+
+        return ResultViewModelDynamic.Success(result.Message);
+    }
 
 
 }
